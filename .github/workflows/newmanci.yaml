@@ -24,8 +24,12 @@ jobs:
           docker compose up -d --build
           npx wait-port http://localhost:3000/health -t 30000
 
-      - name: Run Newman tests
-        run: newman run tests-api/book-App.postman_collection.json
+      - name: Run API tests with Newman
+        run: |
+          npx newman run tests/collections/Book-App.postman_collection.json \
+            -e tests/environments/local.postman_environment.json \
+            -r cli,html,junit \
+            --reporter-junit-export tests/reports/junit.xml
 
       - name: Stop server
         run: docker compose down

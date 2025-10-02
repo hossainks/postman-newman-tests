@@ -1,7 +1,7 @@
 {
 	"info": {
 		"_postman_id": "b4b8c249-9d0d-48c2-bd33-32f72ebe79db",
-		"name": "Book-App Auth",
+		"name": "book-app",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "8803168",
 		"_collection_link": "https://blue-rocket-989944.postman.co/workspace/localhost~6f7db2a8-7f7d-4f6c-8400-0200e9caf65a/collection/8803168-b4b8c249-9d0d-48c2-bd33-32f72ebe79db?action=share&source=collection_link&creator=8803168"
@@ -65,6 +65,17 @@
 						"packages": {},
 						"requests": {}
 					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
 				}
 			],
 			"request": {
@@ -72,7 +83,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"username\": \"testUser1\",\r\n    \"password\": \"testPass\"\r\n}",
+					"raw": "{\r\n    \"username\": \"testUser\",\r\n    \"password\": \"testPass\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -106,7 +117,7 @@
 							"});",
 							"",
 							"const res = pm.response.json();",
-							"pm.collectionVariables.set(\"token\", res.token);",
+							"pm.environment.set(\"token\", res.token);",
 							"",
 							"pm.test(\"Body should contain token\", function () {",
 							"    pm.expect(res).to.have.property('token');",
@@ -130,7 +141,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"username\" : \"testUser\",\r\n    \"password\": \"testPass\"\r\n}",
+					"raw": "{\r\n    \"username\": \"testUser\",\r\n    \"password\": \"testPass\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -163,10 +174,10 @@
 							"let nouns = [\"River\", \"Forest\", \"Dream\", \"Shadow\", \"Journey\", \"Empire\", \"Secret\"];\r",
 							"\r",
 							"let title = adjectives[Math.floor(Math.random() * adjectives.length)] + \" \" + nouns[Math.floor(Math.random() * nouns.length)];\r",
-							"pm.collectionVariables.set(\"bookName\", title);\r",
+							"pm.environment.set(\"bookName\", title);\r",
 							"\r",
 							"let year = Math.floor(Math.random() * (2025 - 1900 + 1)) + 1900;\r",
-							"pm.collectionVariables.set(\"year\",year)\r",
+							"pm.environment.set(\"year\",year)\r",
 							""
 						],
 						"type": "text/javascript",
@@ -193,14 +204,14 @@
 							"});\r",
 							"\r",
 							"pm.test(\"Response must have the expected title\", function () {\r",
-							"    pm.expect(res.title).to.equal(pm.collectionVariables.get(\"bookName\"));\r",
+							"    pm.expect(res.title).to.equal(pm.environment.get(\"bookName\"));\r",
 							"});\r",
 							"\r",
 							"pm.test(\"Response must have the expected year\", function () {\r",
-							"    pm.expect(res.year).to.equal(pm.collectionVariables.get(\"year\"));\r",
+							"    pm.expect(res.year).to.equal(pm.environment.get(\"year\"));\r",
 							"});\r",
 							"\r",
-							"pm.collectionVariables.set(\"bookId\", res._id);"
+							"pm.environment.set(\"bookId\", res._id);"
 						],
 						"type": "text/javascript",
 						"packages": {},
@@ -332,11 +343,11 @@
 							"});\r",
 							"\r",
 							"pm.test(\"Response have the expected title\", function () {\r",
-							"    pm.expect(res.title).to.equal(pm.collectionVariables.get(\"bookName\"));\r",
+							"    pm.expect(res.title).to.equal(pm.environment.get(\"bookName\"));\r",
 							"});\r",
 							"\r",
 							"pm.test(\"Response have the expected year\", function () {\r",
-							"    pm.expect(res.year).to.equal(pm.collectionVariables.get(\"year\"));\r",
+							"    pm.expect(res.year).to.equal(pm.environment.get(\"year\"));\r",
 							"});"
 						],
 						"type": "text/javascript",
@@ -577,6 +588,61 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Deleted Book Message",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 404 for deleted book\", function () {\r",
+							"    pm.response.to.have.status(404);\r",
+							"});\r",
+							"\r",
+							"const res = pm.response.json();\r",
+							"pm.test(\"Check deleted book message\", function () {\r",
+							"    pm.expect(res.message).to.equal('Book not found');\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{Baseurl}}/api/books/{{bookId}}",
+					"protocol": "http",
+					"host": [
+						"{{Baseurl}}"
+					],
+					"path": [
+						"api",
+						"books",
+						"{{bookId}}"
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"event": [
@@ -585,6 +651,7 @@
 			"script": {
 				"type": "text/javascript",
 				"packages": {},
+				"requests": {},
 				"exec": [
 					""
 				]
@@ -595,32 +662,11 @@
 			"script": {
 				"type": "text/javascript",
 				"packages": {},
+				"requests": {},
 				"exec": [
 					""
 				]
 			}
-		}
-	],
-	"variable": [
-		{
-			"key": "Baseurl",
-			"value": "localhost:3000"
-		},
-		{
-			"key": "bookName",
-			"value": ""
-		},
-		{
-			"key": "year",
-			"value": ""
-		},
-		{
-			"key": "bookId",
-			"value": ""
-		},
-		{
-			"key": "token",
-			"value": ""
 		}
 	]
 }

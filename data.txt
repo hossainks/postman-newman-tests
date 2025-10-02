@@ -1,0 +1,6 @@
+npx newman run tests/collections/book-app.postman_collection.json \
+  -e tests/environments/book-env.postman_environment.json \
+  -r cli,html,junit \
+  --reporter-html-export tests/reports/report.html \
+  --reporter-junit-export tests/reports/junit.xml
+

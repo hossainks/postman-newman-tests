@@ -26,10 +26,10 @@ jobs:
 
       - name: Run API tests with Newman
         run: |
-          npx newman run tests/collections/Book-App.postman_collection.json \
-            -e tests/environments/local.postman_environment.json \
-            -r cli,html,junit \
-            --reporter-junit-export tests/reports/junit.xml
+          npx newman run tests/collections/book-app.postman_collection.json \
+          -e tests/environments/book-env.postman_environment.json \
+          -r cli,junit \
+          --reporter-junit-export tests/reports/junit.xml
 
       - name: Stop server
         run: docker compose down

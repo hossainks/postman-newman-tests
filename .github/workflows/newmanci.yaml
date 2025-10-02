@@ -1,0 +1,31 @@
+name: Api Testing using Newman
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+jobs:
+  newman-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "16"
+
+      - name: Install Newman
+        run: npm install -g newman
+
+      - name: Lanuch server
+        run: |
+          docker compose up -d --build
+          npx wait-port http://localhost:3000/health -t 30000
+
+      - name: Run Newman tests
+        run: newman run tests-api/book-App.postman_collection.json
+
+      - name: Stop server
+        run: docker compose down

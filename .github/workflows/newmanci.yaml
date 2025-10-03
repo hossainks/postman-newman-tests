@@ -29,7 +29,15 @@ jobs:
           npx newman run tests/collections/book-app.postman_collection.json \
           -e tests/environments/book-env.postman_environment.json \
           -r cli,junit \
-          --reporter-junit-export tests/reports/junit.xml
+          --reporter-junit-export tests/reports/results.xml
+
+      - name: Publish Postman Test Report
+        uses: dorny/test-reporter@v2
+        if: always()
+        with:
+          name: API Tests
+          path: ./tests/reports/*.xml
+          reporter: jest-junit
 
       - name: Stop server
         run: docker compose down
